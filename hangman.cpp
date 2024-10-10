@@ -278,7 +278,7 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
                 getchar();
             }
         } else if (buscarLetraDigitada(letrasDigitadas, letra)) {
-            cout << "\n\t Caractere já inserido.";
+            cout << "\n\t Caractere ja inserido.";
             getchar();
             cout << endl;
         } else {
