@@ -38,7 +38,7 @@ void salvarDados(int &maiorStreak, int &streak) {
 
 string sortearPalavra(int idioma) {
     int tam;
-    if (idioma == 1) tam = 508;
+    if (idioma == 1) tam = 486;
     if (idioma == 2) tam = 409;
 
     int indice = rand() % tam;
@@ -262,7 +262,8 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
       // hangman
         hangman(tentativas);
       // Dica
-        cout << "         Para dica digite \"?\" [" << (int)dicas << "]\n\n";
+        cout << "      Para dica digite \"?\" [" << (int)dicas;
+        ((int)dicas == 1) ? cout << " dica]\n\n" : cout << " dicas]\n\n" ;
       // Blankspaces
         cout << "  >  ";
         for (char espaco : espacosEmBranco) cout << espaco << " ";
@@ -287,11 +288,11 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
                     quantEncontradas += revelarLetras(palavra, espacosEmBranco, dica);
             } else {
                 cout << "\n\t  Dicas insuficientes.";
-                cin.ignore(1000, '\n');
+                getchar();
             }
         } else if (buscarLetraDigitada(letrasDigitadas, letra)) {
             cout << "\n\t Caractere ja inserido.";
-            cin.ignore(1000, '\n');
+            getchar();
             cout << endl;
         } else {
             int retorno = revelarLetras(palavra, espacosEmBranco, letra);
