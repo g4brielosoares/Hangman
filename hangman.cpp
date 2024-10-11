@@ -37,7 +37,11 @@ void salvarDados(int &maiorStreak, int &streak) {
 }
 
 string sortearPalavra(int idioma) {
-    int indice = rand() % 344;
+    int tam;
+    if (idioma == 1) tam = 508;
+    if (idioma == 2) tam = 409;
+
+    int indice = rand() % tam;
     string palavra;
     ifstream dicionario;
 
@@ -174,65 +178,74 @@ void hangman(int tentativas) {
     cout << "_________________________________________\n\n";
 }
 
-void menuDificuldade(float &dicas, int &tentativas) {
+bool menuDificuldade(float &dicas, int &tentativas) {
     int opc = 0;
 
-    while (opc < 1 || opc > 3) {
+    while (true) {
         system(CLEAR);
-        cout << "\n\t\t HANGMAN\n\n";
+        cout << "\n\t\t HANGMAN\n";
+        cout << "_________________________________________\n";
+        cout << "\n\t       DIFICULDADE\n\n";
         cout << "  [1] - Facil." << endl;
         cout << "  [2] - Medio." << endl;
         cout << "  [3] - Dificil." << endl;
-        cout << "\n         Escolha a dificuldade: ";
+        cout << "\n  [0] - Voltar." << endl;
+        cout << "\n           Escolha uma opcao: ";
         cin >> opc;
-        cin.ignore();
+        cin.ignore(1000, '\n');
         cout << endl;
 
-        switch (opc) {
-        case 1:
-            dicas = 2;
-            tentativas = 9;
-            break;
-        case 2:
-            dicas = 1;
-            tentativas = 8;
-            break;
-        case 3:
-            dicas = 0;
-            tentativas = 7;
-            break;
-        default:
-            cout << "\t     Opcao invalida.";
-            getchar();
+        if (cin.fail()) {
             cin.clear();
-            cout << endl;
-            break;
+            cin.ignore(1000, '\n');
+        } else {
+            switch (opc) {
+                case 0:
+                    return false;
+                case 1:
+                    dicas = 2;
+                    tentativas = 9;
+                    return true;
+                case 2:
+                    dicas = 1;
+                    tentativas = 8;
+                    return true;
+                case 3:
+                    dicas = 0;
+                    tentativas = 7;
+                    return true;
+            }
         }
     }
 }
 
-int menuInicial() {
+void menuInicial(float &dicas, int &tentativas, int &idioma) {
     int opc = 0;
+    
+    do {
+        while (true) {
+            system(CLEAR);
+            cout << "\n\t\t HANGMAN\n";
+            cout << "_________________________________________\n";
+            cout << "\n\t\t IDIOMAS\n\n";
+            cout << "  [1] - Portugues(BR)." << endl;
+            cout << "  [2] - Ingles." << endl;
+            cout << "\n           Escolha uma opcao: ";
+            cin >> opc;
+            cin.ignore(1000, '\n');
+            cout << endl;
 
-    while (opc < 1 || opc > 2) {
-        system(CLEAR);
-        cout << "\n\t\t HANGMAN\n\n";
-        cout << "  [1] - Portugues(BR)." << endl;
-        cout << "  [2] - Ingles." << endl;
-        cout << "\n           Escolha o idioma: ";
-        cin >> opc;
-        cin.ignore();
-        cout << endl;
-
-        if (opc <= 2 && opc >= 1) break;
-        
-        cout << "\t     Opcao invalida.";
-        getchar();
-        cin.clear();
-        cout << endl;
-    }
-
-    return opc;
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(1000, '\n');
+            } else {
+                if (opc == 1 || opc == 2) {
+                    idioma = opc;
+                    break;
+                }
+            }
+        }
+    } while (!menuDificuldade(dicas, tentativas));
 }
 
 char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int idioma) {
@@ -249,7 +262,7 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
       // hangman
         hangman(tentativas);
       // Dica
-        cout << "    Para dica digite \"?\" [" << (int)dicas << " no total]\n\n";
+        cout << "         Para dica digite \"?\" [" << (int)dicas << "]\n\n";
       // Blankspaces
         cout << "  >  ";
         for (char espaco : espacosEmBranco) cout << espaco << " ";
@@ -258,14 +271,13 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
         cout << "\n  Incorretas: ";
         for (char letra : listaIncorretas) 
             (letra == listaIncorretas[0]) ? cout << letra : cout << ", " << letra;
-
         (!listaIncorretas.empty()) ? cout << "." << endl : cout << endl;
       // Inserção
         cout << "\n  Digite uma letra: ";
         cin >> letra;
-        cin.ignore();
+        cin.ignore(1000, '\n');
         letra = tolower(letra);
-
+      // Condições
         if (letra == '?') {
             if (dicas >= 1) {
                 dicas--;
@@ -275,11 +287,11 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
                     quantEncontradas += revelarLetras(palavra, espacosEmBranco, dica);
             } else {
                 cout << "\n\t  Dicas insuficientes.";
-                getchar();
+                cin.ignore(1000, '\n');
             }
         } else if (buscarLetraDigitada(letrasDigitadas, letra)) {
             cout << "\n\t Caractere ja inserido.";
-            getchar();
+            cin.ignore(1000, '\n');
             cout << endl;
         } else {
             int retorno = revelarLetras(palavra, espacosEmBranco, letra);
@@ -298,14 +310,14 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
     system(CLEAR);
     if (quantEncontradas == (int)palavra.length()) {
         cout << "\n\t       VOCE GANHOU!";
-        dicas += 0.4;
+        if (dicas < 5) dicas += 0.42;
         streak++;
 
         if (streak > maiorStreak) 
             maiorStreak = streak;
     } else {
         cout << "\n\t       VOCE PERDEU!";
-        dicas += 0.25;
+        if (dicas < 5) dicas += 0.23;
         streak = 0;
     }
     
@@ -314,6 +326,7 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
     cout << "  A palavra era: " << palavra << "\n\n";
     cout << "  Deseja continuar? (S/N) ";
     cin >> opc;
+    cin.ignore(10000, '\n');
     opc = toupper(opc);
 
     return opc;
@@ -321,15 +334,15 @@ char novaPalavra(int &maiorStreak, int &streak,int tentativas, float &dicas, int
 
 int main() {
     srand(time(0));
-    int streak = 0, maiorStreak = 0, tentativas = 0;
+    int streak = 0, maiorStreak = 0, tentativas = 0, idioma;
     float dicas = 1;
 
-    int idioma = menuInicial();
-    menuDificuldade(dicas, tentativas);
+    menuInicial(dicas, tentativas, idioma);
     receberDados(maiorStreak, streak);
 
     while (novaPalavra(maiorStreak, streak, tentativas, dicas, idioma) != 'N');
     
     salvarDados(maiorStreak, streak);
+
     return 0;
 }
