@@ -16,7 +16,8 @@ using namespace std;
 
 void receberDados(int &maiorStreak, int &streak) {
     ifstream entrada;
-    entrada.open("data.txt");
+
+    entrada.open("../dados/dados.txt", ios::in);
 
     if (entrada.is_open()) {
         entrada >> maiorStreak;
@@ -28,7 +29,8 @@ void receberDados(int &maiorStreak, int &streak) {
 
 void salvarDados(int &maiorStreak, int &streak) {
     ofstream saida;
-    saida.open("data.txt");
+
+    saida.open("../dados/dados.txt", ios::in);
 
     saida << maiorStreak << endl;
     saida << streak << endl;
@@ -45,10 +47,11 @@ string sortearPalavra(int idioma) {
     string palavra;
     ifstream dicionario;
 
-    if (idioma == 1)
-        dicionario.open("pt.txt");
+    if (idioma == 1) 
+        dicionario.open("../lang/pt.txt", ios::in);
     if (idioma == 2)
-        dicionario.open("en.txt");
+        dicionario.open("../lang/en.txt", ios::in);
+    
 
     if (dicionario.is_open()) {
         for (int i = 0; i <= indice; i++)
